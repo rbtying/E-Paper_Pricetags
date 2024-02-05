@@ -3,27 +3,31 @@
 #include "RFV3.h"
 #include "cc1101_spi.h"
 
-SPIClass * vspi = NULL;
+SPIClass *vspi = NULL;
 
-void init_spi() {
-  log("SPI init"); 
+void init_spi()
+{
+  log("SPI init");
   pinMode(SS_PIN, OUTPUT);
   vspi = new SPIClass(VSPI);
-  vspi->begin(CLK_PIN,MISO_PIN,MOSI_PIN);
-  log("SPI init done"); 
+  vspi->begin(CLK_PIN, MISO_PIN, MOSI_PIN);
+  log("SPI init done");
 }
 
-void spi_start() {
+void spi_start()
+{
   digitalWrite(SS_PIN, LOW);
   vspi->beginTransaction(SPISettings(4000000, MSBFIRST, SPI_MODE0));
 }
 
-void spi_end() {
+void spi_end()
+{
   vspi->endTransaction();
   digitalWrite(SS_PIN, HIGH);
 }
 
-uint8_t spi_putc(uint8_t data) {
+uint8_t spi_putc(uint8_t data)
+{
   return vspi->transfer(data);
 }
 
@@ -69,7 +73,7 @@ void spi_write_burst(uint8_t spi_instr, uint8_t *pArr, uint8_t length)
   spi_start();
   spi_putc(spi_instr | 0x40);
 
-  for (uint8_t i = 0; i < length ; i++)
+  for (uint8_t i = 0; i < length; i++)
   {
     spi_putc(pArr[i]);
   }

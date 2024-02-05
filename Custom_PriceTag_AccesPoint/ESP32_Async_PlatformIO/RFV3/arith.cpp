@@ -1,15 +1,4 @@
 #include <Arduino.h>
-#include <SPI.h>
-#include "RFV3.h"
-#include "main_variables.h"
-#include "cc1101_spi.h"
-#include "cc1101.h"
-#include "class.h"
-#include "compression.h"
-#include "interval_timer.h"
-#include "web.h"
-#include "utils.h"
-#include "trans_assist.h"
 #include "arith.h"
 #include <FS.h>
 #if defined(ESP32)
@@ -24,7 +13,7 @@
 //
 void set_bit(uint8_t *buffer_bits, int position, bool state)
 {
-    //set specific bit in byte buffer
+    // set specific bit in byte buffer
     if (buffer_bits != NULL)
     {
         if (state)
@@ -38,7 +27,7 @@ void set_bit(uint8_t *buffer_bits, int position, bool state)
 //
 bool get_bit(uint8_t *buffer_bits, int position)
 {
-    //get specific bit of byte buffer
+    // get specific bit of byte buffer
     if (buffer_bits[position / 8] & (1 << (7 - (position & 7))))
         return 1;
     else
@@ -49,7 +38,7 @@ bool get_bit(uint8_t *buffer_bits, int position)
 //
 bool get_pixel_in(image_s *image_input, int x, int y)
 {
-    //get pixel from byte buffer
+    // get pixel from byte buffer
     if ((x >= 0) && (x < image_input->width) && (y >= 0) && (y < image_input->height))
     {
         return get_bit(&image_input->current_line[1], y);
@@ -101,7 +90,7 @@ int get_key_from_pixel(image_s *image_input, int x, int y)
 //
 int get_key_value(image_s *image_input, int x, int y, uint8_t *key_color, entropy_calc_s *entropy)
 {
-    //reads the key len and key color of the array based on the key_position
+    // reads the key len and key color of the array based on the key_position
     int key_position = get_key_from_pixel(image_input, x, y);
 
     *key_color = entropy->key_color_out[key_position];
@@ -112,7 +101,7 @@ int get_key_value(image_s *image_input, int x, int y, uint8_t *key_color, entrop
 //
 void clean_last_bits(encode_data_s *encode_data)
 {
-    //for every packet bigger then 255 we erase the last bits counting them to one main bit
+    // for every packet bigger then 255 we erase the last bits counting them to one main bit
     int cur_bits_pos = encode_data->out.len - 1;
 
     if (cur_bits_pos >= 0 && encode_data->out.buffer != NULL)
@@ -134,7 +123,7 @@ void clean_last_bits(encode_data_s *encode_data)
 //
 void write_next_bit(encode_data_s *encode_data)
 {
-    //write next bit in output buffer and the needed meta data
+    // write next bit in output buffer and the needed meta data
     encode_data->cur_part_pixel_count *= 2;
     uint32_t cur_bits_len = encode_data->out.len;
 
@@ -150,7 +139,7 @@ void write_next_bit(encode_data_s *encode_data)
 //
 void handle_bit_decode(encode_data_s *encode_data, int key_value, int key_color, int pixel_color)
 {
-    //process the current pixel color and the given key data
+    // process the current pixel color and the given key data
     int cur_pixel_count = encode_data->cur_part_pixel_count;
     int trimmed_max_pixel = cur_pixel_count >> key_value;
 
@@ -169,7 +158,7 @@ void handle_bit_decode(encode_data_s *encode_data, int key_value, int key_color,
         encode_data->cur_part_pixel_count = cur_pixel_count - trimmed_max_pixel;
 
         if (encode_data->countdown_bits & 0x100)
-        { //for every packet bigger then 255 we erase the last bits counting them to one main bit
+        { // for every packet bigger then 255 we erase the last bits counting them to one main bit
             encode_data->countdown_bits = encode_data->countdown_bits & 0xff;
             clean_last_bits(encode_data);
         }
@@ -185,7 +174,7 @@ void handle_bit_decode(encode_data_s *encode_data, int key_value, int key_color,
 //
 void complete_last_bit_part(encode_data_s *encode_data)
 {
-    //when all bits where encoded we need to close the current part, its done here
+    // when all bits where encoded we need to close the current part, its done here
     for (int i = 0; i < 8; i++)
     {
         write_next_bit(encode_data);
@@ -200,16 +189,19 @@ void calculate_entropy(File file, uint8_t *pBitmap, image_s *bin_image_input, _b
     // have to check boundaries on every pixel
     memset(&bin_image_input->current_line[0], 0, sizeof(bin_image_input->current_line));
 
-    //go over every pixel and save the average of the len between each key change
+    // go over every pixel and save the average of the len between each key change
     for (int current_x = 0; current_x < bin_image_input->width; current_x++)
     {
         // Current line becomes the previous
         memcpy(bin_image_input->previous_line, bin_image_input->current_line, sizeof(bin_image_input->current_line));
         // Get a new line of image
         // Can be replaced with a "get_src_image_line()" function
-        if (pBitmap != NULL) { // memory bitmap
+        if (pBitmap != NULL)
+        { // memory bitmap
             memcpy(&bin_image_input->current_line[1], &pBitmap[bmp_infos->pitch * current_x], (size_t)bmp_infos->pitch);
-        } else {
+        }
+        else
+        {
             if (bmp_infos->bTopDown)
                 file.seek(bmp_infos->offset + (bmp_infos->pitch * current_x), SeekSet);
             else
@@ -217,7 +209,7 @@ void calculate_entropy(File file, uint8_t *pBitmap, image_s *bin_image_input, _b
             file.read(&bin_image_input->current_line[1], (size_t)bin_image_input->height / 8);
         }
 
-        //memcpy(&bin_image_input->current_line[1], &bin_image_input->input_buffer[current_x * (bin_image_input->height / 8)], bin_image_input->height / 8);
+        // memcpy(&bin_image_input->current_line[1], &bin_image_input->input_buffer[current_x * (bin_image_input->height / 8)], bin_image_input->height / 8);
 
         for (int current_y = 0; current_y < bin_image_input->height; current_y++)
         {
@@ -239,7 +231,7 @@ void calculate_entropy(File file, uint8_t *pBitmap, image_s *bin_image_input, _b
             }
 
             calc->last_key_color = calc->cur_key_color;
-            //save how many pixels for each key are black or white
+            // save how many pixels for each key are black or white
             if (calc->cur_key_color)
             {
                 calc->color_1_count[calc->cur_key_value]++;
@@ -251,7 +243,7 @@ void calculate_entropy(File file, uint8_t *pBitmap, image_s *bin_image_input, _b
         }
     }
 
-    //calculate the color and len average to rounded numbers
+    // calculate the color and len average to rounded numbers
     for (int i = 0; i < 8; i++)
     {
         calc->key_len_out[i] = (int)(calc->key_average[i] + 0.5f);
@@ -286,10 +278,10 @@ uint32_t encode_raw_image(File file, uint8_t *pBitmap, _bmp_s *bmp_infos, uint8_
     image_s image = {bmp_infos->width, bmp_infos->height};
     uint8_t key_color;
 
-Serial.printf("Entering encode_raw_image; width=%d, height=%d\n", bmp_infos->width, bmp_infos->height);
+    Serial.printf("Entering encode_raw_image; width=%d, height=%d\n", bmp_infos->width, bmp_infos->height);
 
     if (bmp_infos->height < 1 || bmp_infos->width < 1)
-        return 0; //if we dont have any width or heigth there is nothing do encode
+        return 0; // if we dont have any width or heigth there is nothing do encode
 
     encode_data.out.len = 0;
     encode_data.out.len_max = ((max_output_size - 8) * 8);
@@ -323,16 +315,19 @@ Serial.printf("Entering encode_raw_image; width=%d, height=%d\n", bmp_infos->wid
         memcpy(image.previous_line, image.current_line, sizeof(image.current_line));
         // Get a new line of image
         // Can be replaced with a "get_src_image_line()" function
-        if (pBitmap != NULL) { // memory bitmap
+        if (pBitmap != NULL)
+        { // memory bitmap
             memcpy(&image.current_line[1], &pBitmap[bmp_infos->pitch * current_x], (size_t)image.height / 8);
-        } else {
+        }
+        else
+        {
             if (bmp_infos->bTopDown)
                 file.seek(bmp_infos->offset + (bmp_infos->pitch * current_x), SeekSet);
             else
                 file.seek(bmp_infos->offset + (bmp_infos->height - 1 - current_x) * bmp_infos->pitch, SeekSet);
             file.read(&image.current_line[1], (size_t)image.height / 8);
         }
-        //memcpy(&image.current_line[1], &image.input_buffer[current_x * (image.height / 8)], image.height / 8);
+        // memcpy(&image.current_line[1], &image.input_buffer[current_x * (image.height / 8)], image.height / 8);
 
         for (int current_y = 0; current_y < image.height; current_y++)
         {

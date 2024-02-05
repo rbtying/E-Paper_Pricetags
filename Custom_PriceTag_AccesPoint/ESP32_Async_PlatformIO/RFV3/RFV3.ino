@@ -57,7 +57,7 @@ void setup()
   SPIFFS.begin(true);
   init_spi();
   uint8_t radio_status;
-  while ((radio_status=init_radio()))
+  while ((radio_status = init_radio()))
   {
     if (radio_status == 1)
       Serial.println("Radio not working!!! ERROR");

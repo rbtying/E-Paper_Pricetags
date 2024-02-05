@@ -225,7 +225,7 @@ int load_img_to_bufer(String &path, String &path1, bool save_file_to_spiffs)
     int compression_mode = get_compress_method_from_size(bmp_infos.width, bmp_infos.height, &big_address);
     bmp_infos.header_size = (big_address ? 32 : 30);
 
-    if (compression_mode == 2) //Arith
+    if (compression_mode == 2) // Arith
     {
         comp_size = encode_raw_image(file, NULL, &bmp_infos, &data_to_send[bmp_infos.header_size], _send_size - 32 - 7);
         if (colormode)
@@ -235,9 +235,9 @@ int load_img_to_bufer(String &path, String &path1, bool save_file_to_spiffs)
             compression_mode = 0;
         }
     }
-    else if (compression_mode == 1) //RLE
+    else if (compression_mode == 1) // RLE
     {
-        //TODO after RLE fully implemented remove compression mode change here!!!!
+        // TODO after RLE fully implemented remove compression mode change here!!!!
         compression_mode = 0; //<-----THIS ONE
                               /* comp_size = load_img_to_bufer_rle(file, &bmp_infos);
         if (colormode)
@@ -353,10 +353,11 @@ int fill_header(uint8_t *buffer_out, int compression_size, int height, int width
     buffer_out[compression_size + header_size + 5] = 0x01;
     buffer_out[compression_size + header_size + 6] = 0x01;
 
-for (int i=0; i<header_size; i++) {
-  Serial.printf("%02x,",buffer_out[i]);
-}
-Serial.println(" ");
+    for (int i = 0; i < header_size; i++)
+    {
+        Serial.printf("%02x,", buffer_out[i]);
+    }
+    Serial.println(" ");
 
     return header_size + compression_size + 7;
 }

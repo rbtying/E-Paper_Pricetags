@@ -54,8 +54,8 @@ uint8_t init_radio()
   spi_write_register(CC1101_REG_IOCFG0, 0x0E);  // GPIO0 Interrupt on threshold RSSI for LBT
   spi_write_register(CC1101_REG_FIFOTHR, 0x00); // GPIO2 Interrupt threshold
   spi_write_register(CC1101_REG_PKTLEN, 0xFF);
-  spi_write_register(CC1101_REG_PKTCTRL1, 0b00001110); //CRC_flush,Append_RSSI_&_LQI,Address_&_Broadcast_check
-  spi_write_register(CC1101_REG_PKTCTRL0, 0b00000101); //CRC_EN,packet_len_first_byte_after_sync
+  spi_write_register(CC1101_REG_PKTCTRL1, 0b00001110); // CRC_flush,Append_RSSI_&_LQI,Address_&_Broadcast_check
+  spi_write_register(CC1101_REG_PKTCTRL0, 0b00000101); // CRC_EN,packet_len_first_byte_after_sync
   spi_write_register(CC1101_REG_CHANNR, 0x00);
   spi_write_register(CC1101_REG_FSCTRL1, 0x06);
   spi_write_register(CC1101_REG_FSCTRL0, 0x00);
@@ -65,12 +65,12 @@ uint8_t init_radio()
   spi_write_register(CC1101_REG_MDMCFG1, 0x22);
   spi_write_register(CC1101_REG_MDMCFG0, 0xf8);
   spi_write_register(CC1101_REG_DEVIATN, 0x34);
-  spi_write_register(CC1101_REG_MCSM1, 0b00000010); //After_RX=IDLE,After_TX=Stay_TX
-  spi_write_register(CC1101_REG_MCSM0, 0b00001000); //Manual calibrate,PO_Timeout=64
+  spi_write_register(CC1101_REG_MCSM1, 0b00000010); // After_RX=IDLE,After_TX=Stay_TX
+  spi_write_register(CC1101_REG_MCSM0, 0b00001000); // Manual calibrate,PO_Timeout=64
   spi_write_register(CC1101_REG_FOCCFG, 0x16);
   spi_write_register(CC1101_REG_BSCFG, 0x6c);
   spi_write_register(CC1101_REG_AGCCTRL2, 0x43);
-  spi_write_register(CC1101_REG_AGCCTRL1, 0x48);// Not so hard on receiving data.
+  spi_write_register(CC1101_REG_AGCCTRL1, 0x48); // Not so hard on receiving data.
   spi_write_register(CC1101_REG_AGCCTRL0, 0x91);
   spi_write_register(CC1101_REG_FREND1, 0x56);
   spi_write_register(CC1101_REG_FREND0, 0x10);
@@ -94,11 +94,11 @@ uint8_t init_radio()
 uint8_t cc1101_test_gpio(uint8_t GPIO_CONFIG_REG, uint8_t pin)
 {
   pinMode(pin, INPUT);
-  spi_write_register(GPIO_CONFIG_REG, 0b01101001); //Active_LOW,CHIP_RDY_n
+  spi_write_register(GPIO_CONFIG_REG, 0b01101001); // Active_LOW,CHIP_RDY_n
   delay(5);
   if (!digitalRead(pin))
     return 1;
-  spi_write_register(GPIO_CONFIG_REG, 0b00101001); //Active_HIGH,CHIP_RDY_n
+  spi_write_register(GPIO_CONFIG_REG, 0b00101001); // Active_HIGH,CHIP_RDY_n
   delay(5);
   if (digitalRead(pin))
     return 2;
@@ -176,7 +176,7 @@ void cc1101_rx(uint8_t broadcast_rx)
   {
     if (broadcast_mode == 0)
     {
-      spi_write_register(CC1101_REG_PKTCTRL1, 0b00001100); //CRC_flush,Append_RSSI_&_LQI,No Address check
+      spi_write_register(CC1101_REG_PKTCTRL1, 0b00001100); // CRC_flush,Append_RSSI_&_LQI,No Address check
       broadcast_mode = 1;
     }
   }
@@ -184,7 +184,7 @@ void cc1101_rx(uint8_t broadcast_rx)
   {
     if (broadcast_mode == 1)
     {
-      spi_write_register(CC1101_REG_PKTCTRL1, 0b00001110); //CRC_flush,Append_RSSI_&_LQI,Address_&_Broadcast_check
+      spi_write_register(CC1101_REG_PKTCTRL1, 0b00001110); // CRC_flush,Append_RSSI_&_LQI,Address_&_Broadcast_check
       broadcast_mode = 0;
     }
   }
@@ -230,7 +230,7 @@ uint8_t cc1101_prepaire_tx(uint8_t input_freq, uint8_t input_net_id)
     temp_read_cali = spi_read_register(CC1101_STATUS_MARCSTATE);
     if (millis() - last_100_millis > 100)
     {
-      return 1; //Calibration 1 timeout
+      return 1; // Calibration 1 timeout
     }
   }
   spi_write_strobe(CC1101_CMD_SRX);
@@ -239,7 +239,7 @@ uint8_t cc1101_prepaire_tx(uint8_t input_freq, uint8_t input_net_id)
     temp_read_cali = spi_read_register(CC1101_STATUS_MARCSTATE);
     if (millis() - last_100_millis > 100)
     {
-      return 2; //Calibration 2 timeout
+      return 2; // Calibration 2 timeout
     }
   }
   cc1101_idle();

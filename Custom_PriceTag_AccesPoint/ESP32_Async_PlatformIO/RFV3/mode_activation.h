@@ -101,84 +101,84 @@ private:
 
     switch (activation_position)
     {
-    case 0: //Set network id and display id
+    case 0: // Set network id and display id
       tx_act_buffer[8] = 3;
       tx_act_buffer[9] = get_network_id();
       tx_act_buffer[10] = get_display_id() >> 8;
       tx_act_buffer[11] = get_display_id() & 0xff;
       break;
-    case 1: //Channel 0
+    case 1: // Channel 0
       tx_act_buffer[8] = 4;
       tx_act_buffer[9] = 0;
       tx_act_buffer[10] = get_freq() + 1;
       break;
-    case 2: //Channel 1
+    case 2: // Channel 1
       tx_act_buffer[8] = 4;
       tx_act_buffer[9] = 1;
       tx_act_buffer[10] = 0;
       break;
-    case 3: //Channel 2
+    case 3: // Channel 2
       tx_act_buffer[8] = 4;
       tx_act_buffer[9] = 2;
       tx_act_buffer[10] = 0;
       break;
-    case 4: //Channel 3
+    case 4: // Channel 3
       tx_act_buffer[8] = 4;
       tx_act_buffer[9] = 3;
       tx_act_buffer[10] = 0;
       break;
-    case 5: //Channel 4
+    case 5: // Channel 4
       tx_act_buffer[8] = 4;
       tx_act_buffer[9] = 4;
       tx_act_buffer[10] = 0;
       break;
-    case 6: //Channel 5
+    case 6: // Channel 5
       tx_act_buffer[8] = 4;
       tx_act_buffer[9] = 5;
       tx_act_buffer[10] = 0;
       break;
-    case 7: //Channel 6
+    case 7: // Channel 6
       tx_act_buffer[8] = 4;
       tx_act_buffer[9] = 6;
       tx_act_buffer[10] = 0;
       break;
-    case 8: //Channel 7
+    case 8: // Channel 7
       tx_act_buffer[8] = 4;
       tx_act_buffer[9] = 7;
       tx_act_buffer[10] = 0;
       break;
-    case 9: //Number of slots
+    case 9: // Number of slots
       tx_act_buffer[8] = 5;
       tx_act_buffer[9] = get_num_slots() + 1;
       break;
-    case 10: //Time per slot
+    case 10: // Time per slot
       tx_act_buffer[8] = 6;
       tx_act_buffer[9] = 0x04;
       tx_act_buffer[10] = 0x4C;
       break;
-    case 11: //syncs in short sync mode
+    case 11: // syncs in short sync mode
       tx_act_buffer[8] = 7;
       tx_act_buffer[9] = 5;
       break;
-    case 12: //Length of Message from AP to display
+    case 12: // Length of Message from AP to display
       tx_act_buffer[8] = 8;
       tx_act_buffer[9] = 0x39;
       break;
-    case 13: //RF Region 0x40 = EU, 0x38 = US
+    case 13: // RF Region 0x40 = EU, 0x38 = US
       tx_act_buffer[8] = 9;
       tx_act_buffer[9] = 0x40;
       break;
-    case 14: //Extended Sleep 1092 minutes = 65520 seconds = 0xFFF0
+    case 14: // Extended Sleep 1092 minutes = 65520 seconds = 0xFFF0
       tx_act_buffer[8] = 10;
       tx_act_buffer[9] = 0xFF;
       tx_act_buffer[10] = 0xF0;
       break;
-    case 15: //Max Missed Sync Periods
+    case 15: // Max Missed Sync Periods
       tx_act_buffer[8] = 11;
       tx_act_buffer[9] = 0x00;
       tx_act_buffer[10] = 60 / (get_num_slots() + 1);
       break;
-    case 16: //General config
+    case 16: // General config
       tx_act_buffer[8] = 12;
       tx_act_buffer[9] = 0x00;
       tx_act_buffer[10] = 0x01;

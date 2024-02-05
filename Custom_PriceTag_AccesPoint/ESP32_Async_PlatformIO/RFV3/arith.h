@@ -1,17 +1,7 @@
 #pragma once
 #include <Arduino.h>
-#include <SPI.h>
-#include "RFV3.h"
-#include "main_variables.h"
-#include "cc1101_spi.h"
-#include "cc1101.h"
-#include "class.h"
-#include "compression.h"
-#include "interval_timer.h"
-#include "web.h"
-#include "utils.h"
-#include "trans_assist.h"
 #include <FS.h>
+#include "trans_assist.h"
 #if defined(ESP32)
 #include "SPIFFS.h"
 #endif

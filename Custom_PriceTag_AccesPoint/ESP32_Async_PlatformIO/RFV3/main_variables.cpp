@@ -16,8 +16,8 @@ int rx_timeout_ms = 40;
 /*Display specific variables*/
 bool is_data_waiting = false;
 uint8_t data_slot = 0x00;
-uint16_t display_id = 0x0000; //0x0000-0xfffe 0xffff = broadcast
-uint8_t network_id = 1;       //0-255
+uint16_t display_id = 0x0000; // 0x0000-0xfffe 0xffff = broadcast
+uint8_t network_id = 1;       // 0-255
 /*END Display specific variables*/
 
 /*Activation specific variables*/
@@ -26,7 +26,7 @@ uint8_t serial_id[6];
 /*END Activation specific variables*/
 
 /*Network variables*/
-uint8_t num_slot = 4 - 1; //up to 16, when increased less power is used but it takes longer to update
+uint8_t num_slot = 4 - 1; // up to 16, when increased less power is used but it takes longer to update
 uint8_t main_freq = 0;
 int rounds_to_resync = 500;
 /*END Network variables*/
@@ -103,12 +103,15 @@ void set_is_data_waiting(uint16_t id)
 {
   display_id = id;
   data_slot = num_slot & id;
-  if(id){
-  set_last_send_status(1);
-  is_data_waiting = true;
-  }else{
-  set_last_send_status(0);
-  is_data_waiting = false;
+  if (id)
+  {
+    set_last_send_status(1);
+    is_data_waiting = true;
+  }
+  else
+  {
+    set_last_send_status(0);
+    is_data_waiting = false;
   }
 }
 

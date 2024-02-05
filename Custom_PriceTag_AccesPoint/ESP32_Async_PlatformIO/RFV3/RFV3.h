@@ -32,8 +32,8 @@
 #define MISO_PIN 19
 #define SS_PIN 5
 
-//#define GDO0 32 not used currently
-#define GDO2 4
+// #define GDO0 32 not used currently
+#define GDO2 14
 
 void log(String message);
 
