@@ -47,7 +47,7 @@ void GenCustomImage(OBDISP *pOBD, char *text)
   int i, j, y, iLen = strlen(text);
   char szTemp[128];
 
-  //Serial.printf("text:%s len = %d\n", text, iLen);
+  // Serial.printf("text:%s len = %d\n", text, iLen);
   obdFill(pOBD, 0xff, 1); // colors are inverted
   i = 0;
   y = (pOBD->width >= 480) ? 30 : 0; // starting point for font baseline / top
@@ -149,9 +149,10 @@ void init_web()
 
   // Make accessible via http://esl.local using mDNS responder
   if (!MDNS.begin("ESL"))
-    {
+  {
     Serial.println("Error setting up mDNS responder!");
-    while(1) {
+    while (1)
+    {
       delay(1000);
     }
   }
@@ -160,11 +161,11 @@ void init_web()
 
   server.addHandler(new SPIFFSEditor(SPIFFS, http_username, http_password));
 
-  server.on("/heap", HTTP_GET, [](AsyncWebServerRequest *request) {
-    request->send(200, "text/plain", String(ESP.getFreeHeap()));
-  });
+  server.on("/heap", HTTP_GET, [](AsyncWebServerRequest *request)
+            { request->send(200, "text/plain", String(ESP.getFreeHeap())); });
 
-  server.on("/set_file", HTTP_POST, [](AsyncWebServerRequest *request) {
+  server.on("/set_file", HTTP_POST, [](AsyncWebServerRequest *request)
+            {
     int id;
     String filename;
     if (request->hasParam("id") && request->hasParam("file"))
@@ -186,11 +187,11 @@ void init_web()
       request->send(200, "text/plain", "OK cmd to display " + String(id) + " File: " + filename + " Len: " + String(size));
       return;
     }
-    request->send(200, "text/plain", "Wrong parameter");
-  });
+    request->send(200, "text/plain", "Wrong parameter"); });
 
   // Call custom function to generate a dynamic display
-  server.on("/set_custom", HTTP_POST, [](AsyncWebServerRequest *request) {
+  server.on("/set_custom", HTTP_POST, [](AsyncWebServerRequest *request)
+            {
     int i, id, iSum, iType;
     int width = 0, height = 0;
     OBDISP obd;
@@ -308,10 +309,10 @@ void init_web()
       request->send(200, "text/plain", "OK cmd to display " + String(id) + " File: " + filename + " Len: " + String(iSize));
       return;
     }
-    request->send(200, "text/plain", "Wrong parameter");
-  });
+    request->send(200, "text/plain", "Wrong parameter"); });
 
-  server.on("/set_bmp_file", HTTP_POST, [](AsyncWebServerRequest *request) {
+  server.on("/set_bmp_file", HTTP_POST, [](AsyncWebServerRequest *request)
+            {
     int id;
     int iCompressedLen = 0;
     int save_compressed_file_to_spiffs = 0;
@@ -353,10 +354,10 @@ void init_web()
       }
       return;
     }
-    request->send(200, "text/plain", "Wrong parameter");
-  });
+    request->send(200, "text/plain", "Wrong parameter"); });
 
-  server.on("/set_cmd", HTTP_POST, [](AsyncWebServerRequest *request) {
+  server.on("/set_cmd", HTTP_POST, [](AsyncWebServerRequest *request)
+            {
     int id;
     String cmd;
     if (request->hasParam("id") && request->hasParam("cmd"))
@@ -373,14 +374,13 @@ void init_web()
       request->send(200, "text/plain", "OK cmd to display " + String(id) + " " + cmd + " Len: " + String(cmd_len));
       return;
     }
-    request->send(200, "text/plain", "Wrong parameter");
-  });
+    request->send(200, "text/plain", "Wrong parameter"); });
 
-  server.on("/get_answer", HTTP_GET, [](AsyncWebServerRequest *request) {
-    request->send(200, "text/plain", get_last_receive_string());
-  });
+  server.on("/get_answer", HTTP_GET, [](AsyncWebServerRequest *request)
+            { request->send(200, "text/plain", get_last_receive_string()); });
 
-  server.on("/activate_display", HTTP_POST, [](AsyncWebServerRequest *request) {
+  server.on("/activate_display", HTTP_POST, [](AsyncWebServerRequest *request)
+            {
     String serial;
     int id;
     uint8_t serial_array[7];
@@ -423,10 +423,10 @@ void init_web()
         return;
       }
     }
-    request->send(200, "text/plain", "Wrong parameter");
-  });
+    request->send(200, "text/plain", "Wrong parameter"); });
 
-  server.on("/recover_display", HTTP_POST, [](AsyncWebServerRequest *request) {
+  server.on("/recover_display", HTTP_POST, [](AsyncWebServerRequest *request)
+            {
     String serial;
     uint8_t serial_array[7];
     if (request->hasParam("serial"))
@@ -462,10 +462,10 @@ void init_web()
         return;
       }
     }
-    request->send(200, "text/plain", "Wrong parameter");
-  });
+    request->send(200, "text/plain", "Wrong parameter"); });
 
-  server.on("/get_mode", HTTP_GET, [](AsyncWebServerRequest *request) {
+  server.on("/get_mode", HTTP_GET, [](AsyncWebServerRequest *request)
+            {
     String acti_status = "";
     String send_status = "";
     switch (get_last_activation_status())
@@ -505,10 +505,10 @@ void init_web()
       break;
     }
 
-    request->send(200, "text/plain", "Send: " + send_status + " , waiting: " + String(get_is_data_waiting_raw()) + "<br>Activation: " + acti_status + "<br>NetID " + String(get_network_id()) + " freq " + String(get_freq()) + " slot " + String(get_slot_address()) + " bytes left: " + String(get_still_to_send()) + " Open: " + String(get_trans_file_open()) + "<br>last answer: " + get_last_receive_string() + "<br>mode " + get_mode_string());
-  });
+    request->send(200, "text/plain", "Send: " + send_status + " , waiting: " + String(get_is_data_waiting_raw()) + "<br>Activation: " + acti_status + "<br>NetID " + String(get_network_id()) + " freq " + String(get_freq()) + " slot " + String(get_slot_address()) + " bytes left: " + String(get_still_to_send()) + " Open: " + String(get_trans_file_open()) + "<br>last answer: " + get_last_receive_string() + "<br>mode " + get_mode_string()); });
 
-  server.on("/set_mode", HTTP_POST, [](AsyncWebServerRequest *request) {
+  server.on("/set_mode", HTTP_POST, [](AsyncWebServerRequest *request)
+            {
     if (request->hasParam("mode"))
     {
       String new_mode = request->getParam("mode")->value();
@@ -534,10 +534,10 @@ void init_web()
       request->send(200, "text/plain", "Ok set mode");
       return;
     }
-    request->send(200, "text/plain", "Wrong parameter");
-  });
+    request->send(200, "text/plain", "Wrong parameter"); });
 
-  server.on("/set_id", HTTP_POST, [](AsyncWebServerRequest *request) {
+  server.on("/set_id", HTTP_POST, [](AsyncWebServerRequest *request)
+            {
     if (request->hasParam("freq") && request->hasParam("net_id"))
     {
       int sniff_freq = request->getParam("freq")->value().toInt();
@@ -547,10 +547,10 @@ void init_web()
       set_network_id(sniff_net_id);
       return;
     }
-    request->send(200, "text/plain", "Wrong parameter");
-  });
+    request->send(200, "text/plain", "Wrong parameter"); });
 
-  server.on("/set_wu_channel", HTTP_POST, [](AsyncWebServerRequest *request) {
+  server.on("/set_wu_channel", HTTP_POST, [](AsyncWebServerRequest *request)
+            {
     if (request->hasParam("freq"))
     {
       int wu_freq = request->getParam("freq")->value().toInt();
@@ -558,35 +558,34 @@ void init_web()
       set_wu_channel(wu_freq);
       return;
     }
-    request->send(200, "text/plain", "Wrong parameter");
-  });
+    request->send(200, "text/plain", "Wrong parameter"); });
 
-  server.on("/reboot", HTTP_POST, [](AsyncWebServerRequest *request) {
+  server.on("/reboot", HTTP_POST, [](AsyncWebServerRequest *request)
+            {
     request->send(200, "text/plain", "OK Reboot");
-    ESP.restart();
-  });
+    ESP.restart(); });
 
-  server.on("/delete_file", HTTP_POST, [](AsyncWebServerRequest *request) {
+  server.on("/delete_file", HTTP_POST, [](AsyncWebServerRequest *request)
+            {
     request->send(200, "text/plain", "OK delete file");
     deleteFile("/answers.txt");
-    deleteFile("/");
-  });
+    deleteFile("/"); });
 
-  server.on("/get_settings", HTTP_GET, [](AsyncWebServerRequest *request) {
-    request->send(200, "text/plain", "SETTINGS:CHANNEL:" + String(get_freq()) + ":NET_ID:" + String(get_network_id()) + ":SLOTS:" + String(get_num_slots() + 1) + ":FREQ_OFFSET:" + String(get_freq_offset()));
-  });
+  server.on("/get_settings", HTTP_GET, [](AsyncWebServerRequest *request)
+            { request->send(200, "text/plain", "SETTINGS:CHANNEL:" + String(get_freq()) + ":NET_ID:" + String(get_network_id()) + ":SLOTS:" + String(get_num_slots() + 1) + ":FREQ_OFFSET:" + String(get_freq_offset())); });
 
-  server.on("/save_settings", HTTP_POST, [](AsyncWebServerRequest *request) {
+  server.on("/save_settings", HTTP_POST, [](AsyncWebServerRequest *request)
+            {
     request->send(200, "text/plain", "OK saving settings");
-    save_settings_to_flash();
-  });
+    save_settings_to_flash(); });
 
-  server.on("/delete_settings", HTTP_POST, [](AsyncWebServerRequest *request) {
+  server.on("/delete_settings", HTTP_POST, [](AsyncWebServerRequest *request)
+            {
     request->send(200, "text/plain", "OK delete settings");
-    delete_settings_file();
-  });
+    delete_settings_file(); });
 
-  server.on("/set_num_slot", HTTP_POST, [](AsyncWebServerRequest *request) {
+  server.on("/set_num_slot", HTTP_POST, [](AsyncWebServerRequest *request)
+            {
     if (request->hasParam("num_slots"))
     {
       int num_slots = request->getParam("num_slots")->value().toInt();
@@ -594,10 +593,10 @@ void init_web()
       set_num_slot(num_slots);
       return;
     }
-    request->send(200, "text/plain", "Wrong parameter");
-  });
+    request->send(200, "text/plain", "Wrong parameter"); });
 
-  server.on("/set_freq_offset", HTTP_POST, [](AsyncWebServerRequest *request) {
+  server.on("/set_freq_offset", HTTP_POST, [](AsyncWebServerRequest *request)
+            {
     if (request->hasParam("offset"))
     {
       int freq_offset = request->getParam("offset")->value().toInt();
@@ -605,12 +604,12 @@ void init_web()
       CC1101_set_freq_offset(freq_offset);
       return;
     }
-    request->send(200, "text/plain", "Wrong parameter");
-  });
+    request->send(200, "text/plain", "Wrong parameter"); });
 
   server.serveStatic("/", SPIFFS, "/").setDefaultFile("index.htm");
 
-  server.onNotFound([](AsyncWebServerRequest *request) {
+  server.onNotFound([](AsyncWebServerRequest *request)
+                    {
     if (request->url() == "/" || request->url() == "index.htm")
     { // not uploaded the index.htm till now so notify the user about it
       request->send(200, "text/html", "please use <a href=\"/edit\">/edit</a> with login defined in web.cpp to uplaod the supplied index.htm to get full useage");
@@ -664,8 +663,7 @@ void init_web()
         Serial.printf("_GET[%s]: %s\n", p->name().c_str(), p->value().c_str());
       }
     }
-    request->send(404);
-  });
+    request->send(404); });
 
   server.begin();
 }
