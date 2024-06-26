@@ -138,6 +138,7 @@ void init_web()
   WiFi.mode(WIFI_STA);
   WiFiManager wm;
   bool res;
+  log("Attempting to connect to wifi...");
   res = wm.autoConnect("AutoConnectAP");
   if (!res)
   {
